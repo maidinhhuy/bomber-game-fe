@@ -1,0 +1,338 @@
+/* Bomber Man Game Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #282c34;
+  color: #ffffff;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* Prevent scrollbars */
+}
+
+#layout {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  position: relative;
+}
+
+h1 {
+  color: #61dafb;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Game + Scoreboard container layout */
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #3a3f4b;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  border: 2px solid #61dafb;
+  z-index: 1;
+  position: relative;
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+canvas {
+  background-color: #444a57;
+  border: 3px solid #000;
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  display: block;
+  /* Remove extra space below canvas */
+  touch-action: none;
+  /* Disable default touch actions like pan/zoom */
+}
+
+#status {
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.status.connected {
+  color: #4CAF50;
+}
+
+/* Green */
+.status.disconnected {
+  color: #f44336;
+}
+
+/* Red */
+.status.game-over {
+  color: #FFD700;
+}
+
+
+/* Center controls-info below game */
+.controls-info {
+  margin-top: 40px;
+  font-size: 0.9em;
+  color: #bbb;
+  text-align: center;
+  line-height: 1.5;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.controls-info strong {
+  color: #fff;
+}
+
+.game-canvas {
+  display: none
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  #game-container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  .controls-info {
+    font-size: 0.8em;
+  }
+}
+
+.player-name {
+  width: 300px;
+  font-size: 18px;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+.player-name:focus {
+  border-color: #3498db;
+}
+
+/* Position scoreboard to the right of game-container */
+#scoreboard {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 100%;
+  margin-left: 20px;
+  background: linear-gradient(to bottom, #34495e, #2c3e50);
+  border: 2px solid #202d38;
+  border-radius: 12px;
+  padding: 20px;
+  width: 240px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#settings-panel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 100%;
+  margin-right: 20px;
+  background: linear-gradient(to bottom, #34495e, #2c3e50);
+  border: 2px solid #202d38;
+  border-radius: 12px;
+  padding: 20px;
+  width: 240px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#scoreboard h2 {
+  text-align: center;
+  color: #f1c40f;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  /* Text shadow for title */
+  font-size: 1.6em;
+  margin: 0 0 10px 0;
+}
+
+#settings-panel h2 {
+  text-align: center;
+  color: #f1c40f;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  /* Text shadow for title */
+  font-size: 1.6em;
+  margin: 0 0 10px 0;
+}
+
+.score-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: rgba(44, 62, 80, 0.7);
+  /* Slightly transparent background */
+  border-radius: 6px;
+  margin-top: 2px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  /* Smooth hover effect */
+}
+
+.score-entry:nth-child(odd) {
+  background-color: rgba(44, 62, 80, 0.8);
+  /* Alternating row colors */
+}
+
+.score-entry:hover {
+  background-color: rgba(52, 73, 94, 0.9);
+  /* Darken on hover */
+  transform: translateX(5px);
+  /* Slide slightly on hover */
+}
+
+.score-entry span:first-child {
+  font-weight: bold;
+  color: #ecf0f1;
+  font-size: 0.8em;
+}
+
+.score-entry span:last-child {
+  color: #f1c40f;
+  font-size: 0.8em;
+  min-width: 20px;
+  text-align: right;
+  /* Ensure score has minimum width */
+  text-align: right;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.player-name {
+  width: 320px;
+  font-size: 18px;
+  padding: 12px 20px;
+  text-align: center;
+  border: 2px solid transparent;
+  background: linear-gradient(#1e1f23, #1e1f23) padding-box,
+              linear-gradient(90deg, #00eaff, #6f42c1, #ff8c00) border-box;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.4), 0 0 16px rgba(111, 66, 193, 0.3);
+  animation: pulse-border 4s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.player-name::placeholder {
+  color: #a8b2c1;
+  font-style: italic;
+}
+
+.player-name:focus {
+  outline: none;
+  background: linear-gradient(#2c2d33, #2c2d33) padding-box,
+              linear-gradient(90deg, #00ffe1, #4c83ff, #ff00c8) border-box;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.5), 0 0 24px rgba(255, 0, 200, 0.4);
+  transform: scale(1.02);
+}
+
+@keyframes pulse-border {
+  0% {
+    border-image: linear-gradient(90deg, #00eaff, #6f42c1, #ff8c00) 1;
+  }
+  50% {
+    border-image: linear-gradient(90deg, #ff8c00, #00ffe1, #6f42c1) 1;
+  }
+  100% {
+    border-image: linear-gradient(90deg, #00eaff, #6f42c1, #ff8c00) 1;
+  }
+}
+
+/* Import Google Fonts - add this to your <head> section above the style block */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Current Player Styles */
+.current-player {
+  background-color: #404856;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+  border: 1px solid #61dafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.current-player h4 {
+  margin: 0 0 10px 0;
+  color: #61dafb;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.player-name-display {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #ffffff;
+}
+
+.player-status {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.player-status.alive {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.player-status.dead {
+  background-color: #f44336;
+  color: white;
+}
+
+.player-kills {
+  color: #FFD700;
+  font-weight: bold;
+}
