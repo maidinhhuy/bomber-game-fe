@@ -1,4 +1,4 @@
-import type { GameData, Bomb, Explosion, Player, Tombstone } from '../core';
+import type { GameData, Bomb, Explosion, Player } from '../core';
 import { CONFIG, COLORS, HEROES } from '../core';
 import { AssetManager } from '../managers';
 import { PatternGenerator } from './patternGenerator';
@@ -33,17 +33,17 @@ export class Renderer {
     this.drawBombs(gameData);
     this.drawPlayers(gameData);
     this.drawExplosions(gameData);
-    this.drawTombstones(gameData);
   }
 
   private drawBoard(gameData: GameData): void {
     if (!gameData.state) return;
-
-    for (let y = 0; y < CONFIG.BOARD_HEIGHT; y++) {
-      for (let x = 0; x < CONFIG.BOARD_WIDTH; x++) {
+    // Load map width/height from gameData
+    let mapWidth = gameData.state.map.width || CONFIG.BOARD_WIDTH;
+    let mapHeight = gameData.state.map.height || gameData.state.map.board.length || CONFIG.BOARD_HEIGHT
+    for (let y = 0; y < mapHeight; y++) {
+      for (let x = 0; x < mapWidth; x++) {
         const tile = gameData.state.map.board[y][x];
         let fillStyle: string | CanvasPattern | null;
-
         switch (tile) {
           case "Empty":
             fillStyle = COLORS.empty;
@@ -88,7 +88,15 @@ export class Renderer {
   private drawPlayers(gameData: GameData): void {
     if (!gameData.state) return;
     gameData.players.forEach((player: Player) => {
-      if (!player.alive) return;
+      if (!player.alive) {
+        // Draw tombstone if player is dead
+        if (this.assetManager.isImageLoaded(this.assetManager.assets.tombstone)) {
+          const drawX = player.x * CONFIG.TILE_SIZE;
+          const drawY = player.y * CONFIG.TILE_SIZE;
+          this.ctx.drawImage(this.assetManager.assets.tombstone, drawX, drawY, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
+        }
+        return;
+      }
 
       const drawX = player.x * CONFIG.TILE_SIZE;
       const drawY = player.y * CONFIG.TILE_SIZE;
@@ -142,7 +150,6 @@ export class Renderer {
 
   private drawExplosions(gameData: GameData): void {
     gameData.bombs.explosions.forEach((exp: Explosion) => {
-      // Sử dụng logic tương tự GameStateManager để tính thời gian còn lại dựa trên tick_count
       let timeRemaining: number;
       if (exp.explosion_start_tick) {
         const ticksElapsed = gameData.tick_count - exp.explosion_start_tick;
@@ -151,14 +158,13 @@ export class Renderer {
         // Fallback cho explosions cũ không có explosion_start_tick
         timeRemaining = exp.timer || 0;
       }
-      
-      // Kiểm tra timer để tránh vẽ explosion đã hết thời gian
+
       if (timeRemaining <= 0) return;
-      
+
       const TILE_SIZE = CONFIG.TILE_SIZE;
       const EXPLOSION_TICKS = CONFIG.EXPLOSION_TICKS;
       const progress = 1 - (timeRemaining / EXPLOSION_TICKS); // 0 at start, 1 at end
-      
+
       // Calculate dynamic size and position for "growth" effect
       let currentSize;
       if (progress < 0.5) {
@@ -166,21 +172,21 @@ export class Renderer {
       } else {
         currentSize = TILE_SIZE * (1 + (1 - progress) * 0.5); // Shrinks back to TILE_SIZE
       }
-      
+
       currentSize = Math.max(currentSize, TILE_SIZE * 0.1);
-      
+
       const offset = (currentSize - TILE_SIZE) / 2; // Center the expanding/shrinking explosion
       const drawX = exp.x * TILE_SIZE - offset;
       const drawY = exp.y * TILE_SIZE - offset;
 
       const alpha = Math.max(0, timeRemaining / EXPLOSION_TICKS);
-      
+
       if (alpha <= 0.01) return;
-      
+
       this.ctx.fillStyle = `rgba(255, 152, 0, ${alpha})`; // Orange with fading alpha
       this.ctx.fillRect(drawX, drawY, currentSize, currentSize); // Use dynamic size
 
-      const coreRadius = Math.max(1, currentSize / 3); 
+      const coreRadius = Math.max(1, currentSize / 3);
       this.ctx.fillStyle = `rgba(255, 193, 7, ${alpha})`; // Lighter core
       this.ctx.beginPath();
       this.ctx.arc(
@@ -207,27 +213,4 @@ export class Renderer {
     });
   }
 
-
-  private drawTombstones(gameData: GameData): void {
-    if (!gameData.state?.tombstones) return;
-
-    gameData.state.tombstones.forEach((tombstone: Tombstone) => {
-      const drawX = tombstone.x * CONFIG.TILE_SIZE;
-      const drawY = tombstone.y * CONFIG.TILE_SIZE;
-      const timeLeft = Utils.calculateTimeLeft(tombstone.revive_tick, gameData.state!.tick_count);
-
-      if (this.assetManager.isImageLoaded(this.assetManager.assets.tombstone)) {
-        this.ctx.drawImage(this.assetManager.assets.tombstone, drawX, drawY, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
-      }
-
-      this.ctx.font = "12px Arial";
-      this.ctx.textAlign = "center";
-
-      this.ctx.fillStyle = "#ffffff";
-      this.ctx.fillText(tombstone.player_name, drawX + CONFIG.TILE_SIZE / 2, drawY - 4);
-
-      this.ctx.fillStyle = "#ffcc00";
-      this.ctx.fillText(`${timeLeft}s`, drawX + CONFIG.TILE_SIZE / 2, drawY + CONFIG.TILE_SIZE / 1.5);
-    });
-  }
 }

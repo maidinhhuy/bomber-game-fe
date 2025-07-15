@@ -68,6 +68,8 @@ export interface GameState {
   players: Record<string, Player>;
   map: {
     board: string[][];
+    width: number;
+    height: number;
   };
   tick_count: number;
   game_over: boolean;
@@ -98,19 +100,19 @@ export interface Assets {
   sprite: HTMLImageElement;
 }
 
-export type GameEvent = 
+export type GameEvent =
   | { Move: { dx: number; dy: number } }
   | { PlaceBomb: null }
   | { JoinGame: { name: string } }
   | { ResetGame: null };
 
-export type ServerMessage = 
+export type ServerMessage =
   | number // Player ID
   | { GameMap: GameState }
   | { PlayerMoved: { player_id: number; x: number; y: number } }
   | { BombPlaced: { bomb: Bomb } }
   | { BombExploded: Explosion }
-  | { Tick: {tick_count: number} }
+  | { Tick: { tick_count: number } }
   | { PlayerDied: { player_id: number } }
   | { PlayerRevived: { player_id: number; x: number; y: number } }
   | { Reconnect: { player_id: number, success: boolean } };

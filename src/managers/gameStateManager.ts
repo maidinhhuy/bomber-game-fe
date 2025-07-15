@@ -75,14 +75,14 @@ export class GameStateManager {
   }
 
   /**
-   * Tính toán thời gian còn lại của explosion dựa trên tick_count từ server
+   * Compute the time remaining for an explosion.
    */
   getExplosionTimeRemaining(explosion: any): number {
     if (!explosion.explosion_start_tick) {
-      // Fallback cho explosions cũ không có explosion_start_tick
+      // Fallback for legacy explosions without start tick
       return explosion.timer || 0;
     }
-    
+
     const ticksElapsed = this.gameData.tick_count - explosion.explosion_start_tick;
     const timeRemaining = Math.max(0, CONFIG.EXPLOSION_TICKS - ticksElapsed);
     return timeRemaining;
@@ -94,7 +94,7 @@ export class GameStateManager {
       const timeRemaining = this.getExplosionTimeRemaining(exp);
       return timeRemaining > 0;
     });
-    
+
     if (this.gameData.bombs.explosions.length < initialLength) {
       console.log(`GameStateManager cleaned up ${initialLength - this.gameData.bombs.explosions.length} expired explosions`);
     }
@@ -106,16 +106,16 @@ export class GameStateManager {
   }
 
   updatePlayerCount(): void {
-    const alives = this.getAlivePlayers().length;
-    
-    if (this.gameData.countPlayerAlive !== 0 && alives < this.gameData.countPlayerAlive) {
+    const alive = this.getAlivePlayers().length;
+
+    if (this.gameData.countPlayerAlive !== 0 && alive < this.gameData.countPlayerAlive) {
       // Trigger death effect if available
       if (typeof (window as any).effectWhenDead === 'function') {
         (window as any).effectWhenDead();
       }
     }
-    
-    this.gameData.countPlayerAlive = alives || 0;
+
+    this.gameData.countPlayerAlive = alive || 0;
   }
 
   isGameOver(): boolean {
@@ -129,11 +129,11 @@ export class GameStateManager {
   getWinnerName(): string {
     const winnerId = this.getWinnerId();
     if (!winnerId || !this.gameData.state) return '';
-    
+
     const winnerPlayer = Object.values(this.gameData.state.players).find(
       p => p.id === winnerId
     );
-    
+
     return winnerPlayer ? winnerPlayer.name : `Player ${winnerId}`;
   }
 }

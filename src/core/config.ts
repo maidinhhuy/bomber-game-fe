@@ -1,8 +1,8 @@
 import type { GameConfig, Colors, Hero } from './types';
 
 export const CONFIG: GameConfig = {
-  BOARD_WIDTH: 39,
-  BOARD_HEIGHT: 20,
+  BOARD_WIDTH: 41,
+  BOARD_HEIGHT: 19,
   TILE_SIZE: 32,
   SPRITE_WIDTH: 235,
   SPRITE_HEIGHT: 275,

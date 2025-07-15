@@ -86,7 +86,7 @@ export class WebSocketManager {
   private handleTickCount(tick: any): void {
     this.gameData.tick_count = tick.tick_count;
     this.onGameStateUpdate();
-    this.onUIUpdate();
+    // this.onUIUpdate();
   }
 
 
@@ -121,10 +121,7 @@ export class WebSocketManager {
   private handleBombExploded(bombExploded: any): void {
     const explosions = bombExploded.explosions || [];
     this.gameStateManager.addExplosions(explosions);
-
-    // Remove the bomb that exploded
-    this.gameStateManager.removeBomb(bombExploded.bomb_id);
-
+    this.updateGameBombs(bombExploded.bombs || []);
     // Update game map
     if (bombExploded.game_map) {
       this.gameStateManager.updateGameMap({
@@ -135,6 +132,11 @@ export class WebSocketManager {
     // Cleanup expired explosions
     this.gameStateManager.cleanupExpiredExplosions();
 
+    this.onGameStateUpdate();
+  }
+
+  updateGameBombs(bombs: any[]): void {
+    this.gameData.bombs.bombs = bombs;
     this.onGameStateUpdate();
   }
 
